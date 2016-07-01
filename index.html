@@ -1,0 +1,158 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart','gauge','line']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(initialize);
+
+      function initialize() {
+      	  getData();
+      	  setInterval(getData, 300);
+      }
+      
+      function getData() {
+      	  var opts = {sendMethod: 'auto'};
+      	// Replace the data source URL on next line with your data source URL.
+      	  var query = new google.visualization.Query('https://agent.electricimp.com/YX3yRXxdcG-L', opts);
+      	  
+      	  // Send the query with a callback function.
+      	  query.send(handleQueryResponse);  
+      	  
+      	  query = new google.visualization.Query('https://agent.electricimp.com/YX3yRXxdcG-L/gauge', opts);
+      	  
+      	  // Send the query with a callback function.
+      	  query.send(handleGaugeQueryResponse);  
+      }
+      
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart(data) {
+      	  
+      	  var view_light = new google.visualization.DataView(data);
+      	  view_light.setColumns([0,2]);
+      	  var view_pressure = new google.visualization.DataView(data);
+      	  view_pressure.setColumns([0,3]);
+      	  var view_temperature = new google.visualization.DataView(data);
+      	  view_temperature.setColumns([0,1]);
+      	  var view_humidity = new google.visualization.DataView(data);
+      	  view_humidity.setColumns([0,4]);
+      	  
+      	  // Instantiate and draw our chart, passing in some options.
+      	  var chart = new google.visualization.LineChart(document.getElementById('chart_light'));
+      	  chart.draw(view_light, { 'title':'Light Level', 'interpolateNulls':true,
+      	  	  'legend':{position:'none'}, 'width': 1000,
+      	  	  hAxis: {
+      	  	  	  title: 'Time'
+      	  	  },
+      	  	  vAxis: {
+      	  	  	  title: 'Brightness (Lux)'
+      	  	  }
+      	  });
+      	  
+      	  chart = new google.visualization.LineChart(document.getElementById('chart_pressure'));
+      	  chart.draw(view_pressure, { 'title':'Pressure', 'interpolateNulls':true,
+      	  	  'legend':{position:'none'}, 'width': 1000,
+      	  	  hAxis: {
+      	  	  	  title: 'Time'
+      	  	  },
+      	  	  vAxis: {
+      	  	  	  title: 'Pressure (HPa)'
+      	  	  }
+      	  });
+      	  
+      	  chart = new google.visualization.LineChart(document.getElementById('chart_temperature'));
+      	  chart.draw(view_temperature, { 'title':'Temperature', 'interpolateNulls':true,
+      	  	  'legend':{position:'none'}, 'width': 1000,
+      	  	  hAxis: {
+      	  	  	  title: 'Time'
+      	  	  },
+      	  	  vAxis: {
+      	  	  	  title: 'Temperature (ºC)'
+      	  	  }
+      	  });
+      	  
+      	  chart = new google.visualization.LineChart(document.getElementById('chart_humidity'));
+      	  chart.draw(view_humidity, { 'title':'Humidity', 'interpolateNulls':true,
+      	  	  'legend':{position:'none'}, 'width': 1000,
+      	  	  hAxis: {
+      	  	  	  title: 'Time'
+      	  	  },
+      	  	  vAxis: {
+      	  	  	  title: 'Humidity (%rH)'
+      	  	  }
+      	  });
+      	  
+      }
+      
+      function drawGauges(data) {
+      	  var gauge_light = new google.visualization.DataView(data);
+      	  gauge_light.setRows([1]);
+      	  
+      	  var gauge_pressure = new google.visualization.DataView(data);
+      	  gauge_pressure.setRows([2]);
+      	  
+      	  var gauge_temperature = new google.visualization.DataView(data);
+      	  gauge_temperature.setRows([0]);
+      	  
+      	  var gauge_humidity = new google.visualization.DataView(data);
+      	  gauge_humidity.setRows([3]);
+      	  
+      	  var gauge = new google.visualization.Gauge(document.getElementById('gauge_light'));
+      	  gauge.draw(gauge_light, {'width':250, 'minorTicks': 5, 'max':1000, 'min':0});
+      	  
+      	  gauge = new google.visualization.Gauge(document.getElementById('gauge_pressure'));
+		  gauge.draw(gauge_pressure, {'width':250, 'minorTicks': 5, 'max':1050, 'min':950});
+      	  
+      	  gauge = new google.visualization.Gauge(document.getElementById('gauge_temperature'));
+      	  gauge.draw(gauge_temperature, {'width':250, 'minorTicks': 5, 'max':50, 'min':0});
+      	  
+      	  gauge = new google.visualization.Gauge(document.getElementById('gauge_humidity'));
+      	  gauge.draw(gauge_humidity, {'width':250, 'minorTicks': 5, 'max':100, 'min':0});
+      }
+      
+      function handleQueryResponse(response) {
+      	  if (response.isError()) {
+      	  	  alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+      	  	  return;
+      	  }
+      	  
+      	  var data = response.getDataTable();
+      	  drawChart(data);
+      }
+      function handleGaugeQueryResponse(response) {
+      	  if (response.isError()) {
+      	  	  alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+      	  	  return;
+      	  }
+      	  
+      	  var data = response.getDataTable();
+      	  drawGauges(data);
+      }
+    </script>
+  </head>
+
+  <body>
+  	<center>
+  	<table class="columns">
+		<tr>
+			<td><div id="chart_light"></div></td><td><div id="gauge_light"></div></td>
+		</tr>
+		<tr>
+			<td><div id="chart_pressure"></div></td><td><div id="gauge_pressure"></div></td>
+		</tr>
+		<tr>
+			<td><div id="chart_temperature"></div></td><td><div id="gauge_temperature"></div></td>
+		</tr>
+		<tr>
+			<td><div id="chart_humidity"></div></td><td><div id="gauge_humidity"></td></div>
+		</tr>
+	</table
+    </center>
+  </body>
+</html>
