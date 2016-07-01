@@ -12,18 +12,24 @@
 
       function initialize() {
       	  getData();
-      	  setInterval(getData, 300);
+      	  getGaugeData();
+      	  setInterval(getData, 2000);
+      	  setInterval(getGaugeData, 250);
       }
       
       function getData() {
-      	  var opts = {sendMethod: 'auto'};
+      	  
       	// Replace the data source URL on next line with your data source URL.
-      	  var query = new google.visualization.Query('https://agent.electricimp.com/YX3yRXxdcG-L', opts);
+      	  var query = new google.visualization.Query('https://agent.electricimp.com/YX3yRXxdcG-L', {sendMethod: 'auto'});
       	  
       	  // Send the query with a callback function.
       	  query.send(handleQueryResponse);  
       	  
-      	  query = new google.visualization.Query('https://agent.electricimp.com/YX3yRXxdcG-L/gauge', opts);
+      	 
+      }
+      
+      function getGaugeData() {
+      	  query = new google.visualization.Query('https://agent.electricimp.com/YX3yRXxdcG-L/gauge', {sendMethod: 'auto'});
       	  
       	  // Send the query with a callback function.
       	  query.send(handleGaugeQueryResponse);  
