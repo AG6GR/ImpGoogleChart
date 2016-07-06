@@ -124,3 +124,65 @@ server.log(dt.toJSON());
 // Equivalent to
 server.log(http.jsonencode(dt.toTable()));
 ```
+
+### respond(*request, [currentSig]*)
+
+Responds to a Google Charts Query with the data contained in this DataTable. request is the received httprequest object. This method returns a string with the appropriate httpresponse body text.
+
+currentSig is an optional string parameter specifiying a hash value for this DataTable. This is used to send a "not_modified" response if the data has not changed since the last request. If currentSig is not provided, this functionallity will be disabled.
+
+```squirrel
+function requestHandler(request, response) {
+	try {
+		response.send(200, dt.respond(request, http.base64encode(http.hash.md5(dt.toJSON()))));
+	} catch (exception) {
+	    server.error(exception);
+		response.send(500, "Internal Server Error: " + exception);
+	}
+}
+// Register the handler function as a callback
+http.onrequest(requestHandler);
+```
+
+### getValue(*rowIndex, columnIndex*)
+
+Returns the value of the cell at the given row and column indexes.
+
+```squirrel
+dt <- DataTable();
+
+dt.addColumn(DataTable.TYPE_NUMBER, "Value");
+dt.addRow([0]);
+
+dt.getValue(0, 0);
+```
+
+### getColumn(*columnIndex*)
+
+Returns a table containing the properties of the column with the given index. A brief summary of typical keys is given below:
+
+| Key | Description |
+|-----|-------------|
+| *id*  | The column identifier. For data tables that are retrieved by queries, the column identifier is set by the data source, and can be used to refer to columns when using the query language. |
+| *label* | The column label is typically displayed as part of the visualization. For example the column label can be displayed as a column header in a table, or as the legend label in a pie chart. |
+| *type* | A string indicating the data type stored in this label. See the supported types listed for the *addColumn* method.|
+
+### getNumberOfColumns()
+
+Returns the number of columns in the table.
+
+### getNumberOfRows()
+
+Returns the number of rows in the table.
+
+### removeColumns(*columnIndex, numberOfColumns*)
+
+Removes the specified number of columns starting from the column at the specified index.
+
+### removeRows(*rowIndex, numberOfRows*)
+
+Removes the specified number of rows starting from the row at the specified index.
+
+### setCell(*rowIndex, columnIndex, value*)
+
+Sets the value of the specified cell in the DataTable. Each value can either a table representing a formatted cell created with the *makeCell()* method or a raw value which will be wrapped in a table for insertion into the DataTable.
