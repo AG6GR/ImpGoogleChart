@@ -186,3 +186,31 @@ Removes the specified number of rows starting from the row at the specified inde
 ### setCell(*rowIndex, columnIndex, value*)
 
 Sets the value of the specified cell in the DataTable. Each value can either a table representing a formatted cell created with the *makeCell()* method or a raw value which will be wrapped in a table for insertion into the DataTable.
+
+## Static Methods
+
+### makeCell(*[value, formated_value, properties]*)
+
+Returns a table representing a DataTable cell with the specified value, formatted value, and properties table. 
+
+
+
+### GJSONtoTable(*text*)
+
+Decodes a modified-JSON string as returned by Google's libraries into a squirrel table. Google JSON is identical to standard JSON except that keys are unquoted and string values are single-quoted rather than double-quoted.
+
+### toDateTime(*datetime*)
+
+Translates a date table (as returned by date()) into a TYPE_DATETIME compatible string for inclusion in a DataTable cell.
+
+```squirrel
+dt <- DataTable();
+
+dt.addColumn(DataTable.TYPE_DATETIME, "Time");
+dt.addColumn(DataTable.TYPE_NUMBER, "Temperature");
+
+// Timestamp and log data from the device
+device.on("Temperature", function(data) {
+	dt.addRow([DataTable.toDateTime(date()), data.temperature]);
+});
+```
