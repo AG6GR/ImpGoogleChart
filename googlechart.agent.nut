@@ -32,7 +32,7 @@ class DataTable {
 	 * keys are unquoted and string values are single-quoted rather than double-
 	 * quoted.
 	 */
-	function GJSONtoTable(text) {
+	static function GJSONtoTable(text) {
 		local i = 0;
 		local keyvalues = split(text, ":;");
 		local resultTable = {};
@@ -47,7 +47,7 @@ class DataTable {
 	 * Translates a date table (as returned by date()) into a TYPE_DATETIME
 	 * compatible string for inclusion in a DataTable cell.
 	 */
-	function toDateTime(datetime) {
+	static function toDateTime(datetime) {
 		local dateTable = (typeof datetime == "table") ? datetime : date(datetime);
 		return format("Date(%d, %d, %d, %d, %d, %d, %d)", 
 			dateTable.year, dateTable.month, dateTable.day, dateTable.hour,
@@ -99,7 +99,7 @@ class DataTable {
 	}
 	
 	/*
-	 * Inserts a new column to the data table, at the specifid index. All 
+	 * Inserts a new column to the data table, at the specified index. All 
 	 * existing columns at or after the specified index are shifted to a 
 	 * higher index.
 	 */
@@ -119,11 +119,12 @@ class DataTable {
 		_cols.insert(columnIndex, newCol);
 	}
 	/*
-	 * Inserts one new rows to the data table at the specified index.
+	 * Inserts one new row to the data table at the specified index.
 	 * cellArray is an array of values representing the contents 
 	 * of the new row. Each value can either a table representing a formatted 
 	 * cell created with the makeCell() function or a raw value which will be 
-	 * wrapped in a table for insertion into the DataTable.
+	 * wrapped in a table for insertion into the DataTable. All existing rows
+	 * at or after the specified index are shifted to a higher index.
 	 */
 	function insertRow(rowIndex, cellArray) {
 	    foreach (row in cellArray) {
@@ -163,7 +164,7 @@ class DataTable {
 	 * currentSig is an optional string parameter specifiying the hash of this
 	 * DataTable. This is used to send a "not_modified" response if the data has
 	 * not changed since the last request. If currentSig is not provided, this
-	 * this functionallity will be disabled.
+	 * functionallity will be disabled.
 	 */
 	function respond(request, currentSig=null) {
 		// Decode request
@@ -210,37 +211,22 @@ class DataTable {
 	function getValue(rowIndex, columnIndex) {
 		return ("v" in _row[rowIndex]["c"][columnIndex]) ? _row[rowIndex]["c"][columnIndex]["v"] : null;
 	}
-	
-	/* 
-	 * Returns the identifier of a given column specified by the column index
-	 * in the underlying table.
-	 * 
-	 * For data tables that are retrieved by queries, the column identifier 
+	/*
+	 * Returns a table containing the properties of the column with the given
+	 * index. A brief summary of typical keys is given below:
+	 *
+	 * id: For data tables that are retrieved by queries, the column identifier 
 	 * is set by the data source, and can be used to refer to columns when 
 	 * using the query language. 
-	 */
-	function getColumnId(columnIndex) {
-		return _cols[columnIndex].id;
-	}
-	
-	/* 
-	 * Returns the identifier of a given column specified by the column index
-	 * in the underlying table.
 	 *
-	 * The column label is typically displayed as part of the visualization. 
-	 * For example the column label can be displayed as a column header in a 
-	 * table, or as the legend label in a pie chart. 
+	 * label: The column label is typically displayed as part of the 
+	 * visualization. For example the column label can be displayed as a 
+	 * column header in a table, or as the legend label in a pie chart. 
+	 *
+	 * type: A string indicating the data type stored in this label.
 	 */
-	function getColumnLabel(columnIndex) {
-		return _cols[columnIndex].label;
-	}
-	
-	/* 
-	 * Returns the type of a given column specified by the column index as a
-	 * string.
-	 */
-	function getColumnType(columnIndex) {
-		return _cols[columnIndex].type;
+	function getColumn(columnIndex) {
+		return _cols[columnIndex];
 	}
 	
 	/*
