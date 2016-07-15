@@ -1,5 +1,5 @@
 # Google Charts on Electric Imp
-The DataTable class allows an Electric Imp agent to serve as a data source for Google Charts. A DataTable object acts like its Javascript equivalent, allowing the agent to easily record and format data for presentation. The DataTable object can also be used to respond to requests made by Queries using the Chart Tools Datasource protocol.
+The DataTable class allows an Electric Imp agent to serve as a data source for [Google Charts](https://developers.google.com/chart/). A DataTable object acts like its [Javascript equivalent](https://developers.google.com/chart/interactive/docs/reference#DataTable), allowing the agent to easily record and format data for presentation. The DataTable object can also be used to respond to requests made by [Queries](https://developers.google.com/chart/interactive/docs/queries) using the [Chart Tools Datasource protocol](https://developers.google.com/chart/interactive/docs/dev/implementing_data_source).
 
 ## Class Usage
 
