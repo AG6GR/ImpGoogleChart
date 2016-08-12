@@ -209,7 +209,7 @@ class DataTable {
 	 * Returns the value of the cell at the given row and column indexes.
 	 */
 	function getValue(rowIndex, columnIndex) {
-		return ("v" in _row[rowIndex]["c"][columnIndex]) ? _row[rowIndex]["c"][columnIndex]["v"] : null;
+		return ("v" in _rows[rowIndex]["c"][columnIndex]) ? _rows[rowIndex]["c"][columnIndex]["v"] : null;
 	}
 	/*
 	 * Returns a table containing the properties of the column with the given
